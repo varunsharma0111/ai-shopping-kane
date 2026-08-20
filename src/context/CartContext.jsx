@@ -8,6 +8,7 @@ export const CartProvider = ({ children }) => {
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
   const [completedOrder, setCompletedOrder] = useState(null);
   const [chaosMode, setChaosMode] = useState(false);
+  const [bugMode, setBugMode] = useState(false);
   const [telemetryLogs, setTelemetryLogs] = useState([
     { id: 1, type: 'SYSTEM', text: 'AI Self-Healing Shopping App initialized.', time: new Date().toLocaleTimeString() }
   ]);
@@ -23,6 +24,14 @@ export const CartProvider = ({ children }) => {
     setChaosMode((prev) => {
       const next = !prev;
       addLog('CHAOS', next ? '⚠️ Chaos Mode ACTIVE: Classnames dynamically mutated.' : '✅ Chaos Mode OFF: Standard DOM restored.');
+      return next;
+    });
+  };
+
+  const toggleBugMode = () => {
+    setBugMode((prev) => {
+      const next = !prev;
+      addLog('BUG', next ? '🐛 Special Bug INJECTED: Subtotal calculation flaw enabled (Total glitch).' : '✅ Bug REMOVED: Calculations working normally.');
       return next;
     });
   };
@@ -70,7 +79,13 @@ export const CartProvider = ({ children }) => {
   };
 
   const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
-  const subtotal = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+  const realSubtotal = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+
+  // If bugMode is active, calculate subtotal incorrectly (e.g. missing 1 item's price) so Kane detects calculation bug!
+  const subtotal = bugMode
+    ? (cart.length > 0 ? realSubtotal - cart[0].price : realSubtotal)
+    : realSubtotal;
+
   const shipping = subtotal > 0 ? (subtotal > 200 ? 0 : 15.00) : 0;
   const total = subtotal + shipping;
 
@@ -84,6 +99,7 @@ export const CartProvider = ({ children }) => {
         clearCart,
         totalItems,
         subtotal,
+        realSubtotal,
         shipping,
         total,
         isCartOpen,
@@ -94,6 +110,8 @@ export const CartProvider = ({ children }) => {
         setCompletedOrder,
         chaosMode,
         toggleChaosMode,
+        bugMode,
+        toggleBugMode,
         telemetryLogs,
         addLog
       }}

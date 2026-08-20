@@ -2,7 +2,7 @@ import React from 'react';
 import { useCart } from '../context/CartContext';
 
 export const Header = () => {
-  const { totalItems, setIsCartOpen, chaosMode, toggleChaosMode } = useCart();
+  const { totalItems, setIsCartOpen, chaosMode, toggleChaosMode, bugMode, toggleBugMode } = useCart();
 
   return (
     <header className="site-header">
@@ -14,6 +14,18 @@ export const Header = () => {
         </div>
 
         <div className="header-actions">
+          <button
+            className={`bug-mode-btn ${bugMode ? 'active' : ''}`}
+            data-testid="bug-injector"
+            onClick={toggleBugMode}
+            title="Inject a price calculation bug for Kane CLI to catch!"
+          >
+            <span className="bug-icon">🐛</span>
+            <span className="bug-text">
+              {bugMode ? 'Bug Injected! (Calculation Glitch)' : 'Inject Bug for Kane'}
+            </span>
+          </button>
+
           <button
             className={`chaos-mode-btn ${chaosMode ? 'active' : ''}`}
             data-testid="chaos-toggle"
