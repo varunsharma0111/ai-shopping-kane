@@ -48,7 +48,7 @@ body {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
-  padding-bottom: 160px; /* Space for telemetry bar */
+  padding-bottom: 180px; /* Space for telemetry bar & verification widget */
 }
 
 main {
@@ -118,34 +118,6 @@ main {
   display: flex;
   align-items: center;
   gap: 0.75rem;
-}
-
-.bug-mode-btn {
-  display: flex;
-  align-items: center;
-  gap: 0.4rem;
-  background: rgba(239, 68, 68, 0.1);
-  border: 1px solid rgba(239, 68, 68, 0.3);
-  color: #f87171;
-  padding: 0.55rem 0.9rem;
-  border-radius: 30px;
-  cursor: pointer;
-  font-weight: 600;
-  font-size: 0.85rem;
-  transition: all 0.2s ease;
-}
-
-.bug-mode-btn:hover {
-  background: rgba(239, 68, 68, 0.2);
-  border-color: #ef4444;
-}
-
-.bug-mode-btn.active {
-  background: rgba(239, 68, 68, 0.3);
-  border-color: #dc2626;
-  color: #ffffff;
-  box-shadow: 0 0 15px rgba(239, 68, 68, 0.4);
-  animation: pulse 1.5s infinite;
 }
 
 .chaos-mode-btn {
@@ -884,6 +856,100 @@ main {
   font-size: 1.1rem;
 }
 
+/* Verification Dashboard Widget (Step 11) */
+.verification-dashboard-widget {
+  position: fixed;
+  top: 80px;
+  right: 20px;
+  z-index: 850;
+  width: 320px;
+  background: var(--glass-bg);
+  backdrop-filter: blur(16px);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--glass-shadow);
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.v-widget-header {
+  padding: 0.75rem 1rem;
+  background: rgba(17, 24, 39, 0.9);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.v-widget-title {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.825rem;
+  color: white;
+}
+
+.v-toggle-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  font-size: 0.75rem;
+  cursor: pointer;
+}
+
+.v-widget-content {
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  font-size: 0.8rem;
+}
+
+.v-step-card {
+  padding: 0.6rem;
+  border-radius: 6px;
+  border: 1px solid var(--border-subtle);
+}
+
+.v-step-card.pass {
+  background: rgba(16, 185, 129, 0.1);
+  border-color: rgba(16, 185, 129, 0.3);
+}
+
+.v-step-card.fail {
+  background: rgba(239, 68, 68, 0.15);
+  border-color: rgba(239, 68, 68, 0.4);
+}
+
+.v-step-card.pending {
+  background: rgba(245, 158, 11, 0.1);
+  border-color: rgba(245, 158, 11, 0.3);
+}
+
+.v-step-badge {
+  font-weight: 700;
+  font-size: 0.7rem;
+  letter-spacing: 0.5px;
+  margin-bottom: 0.2rem;
+}
+
+.pass .v-step-badge { color: var(--accent-green); }
+.fail .v-step-badge { color: #f87171; }
+.pending .v-step-badge { color: #fbbf24; }
+
+.v-step-desc {
+  color: var(--text-main);
+  font-size: 0.775rem;
+}
+
+.v-arrow {
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 0.75rem;
+  margin: -0.1rem 0;
+}
+
 /* Telemetry Bar */
 .telemetry-bar {
   position: fixed;
@@ -1029,10 +1095,243 @@ main {
   .cart-drawer {
     max-width: 100%;
   }
-  .header-actions {
-    gap: 0.5rem;
-  }
-  .chaos-text, .bug-text {
-    display: none;
+  .verification-dashboard-widget {
+    position: relative;
+    top: 0;
+    right: 0;
+    width: 100%;
+    margin-bottom: 1rem;
   }
 }
+
+/* Enhanced Verification Dashboard Timeline & Actions */
+.verification-dashboard-widget {
+  width: 360px !important;
+}
+
+.v-status-pill {
+  display: inline-block;
+  font-size: 0.68rem;
+  font-weight: 800;
+  padding: 0.15rem 0.5rem;
+  border-radius: 12px;
+  margin-left: 0.5rem;
+  letter-spacing: 0.5px;
+}
+
+.badge-pass {
+  background: rgba(16, 185, 129, 0.2);
+  color: var(--accent-green);
+  border: 1px solid rgba(16, 185, 129, 0.4);
+}
+
+.badge-fail {
+  background: rgba(239, 68, 68, 0.2);
+  color: #f87171;
+  border: 1px solid rgba(239, 68, 68, 0.4);
+  animation: pulse 1.5s infinite;
+}
+
+.v-tab-bar {
+  display: flex;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 6px;
+  padding: 0.2rem;
+  gap: 0.25rem;
+  margin-bottom: 0.5rem;
+}
+
+.v-tab-btn {
+  flex: 1;
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  font-weight: 600;
+  font-size: 0.75rem;
+  padding: 0.4rem 0.5rem;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.v-tab-btn.active {
+  background: rgba(255, 255, 255, 0.12);
+  color: white;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.v-timeline-container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.v-timeline-header {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  letter-spacing: 0.5px;
+  padding-bottom: 0.25rem;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.v-timeline-list {
+  max-height: 280px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding-right: 0.2rem;
+}
+
+.v-timeline-card {
+  background: rgba(15, 23, 42, 0.7);
+  border: 1px solid var(--border-subtle);
+  border-left: 3px solid var(--accent-cyan);
+  border-radius: 6px;
+  padding: 0.5rem 0.65rem;
+}
+
+.v-timeline-card.fail {
+  border-left-color: #ef4444;
+  background: rgba(239, 68, 68, 0.08);
+}
+
+.v-timeline-card.pass {
+  border-left-color: var(--accent-green);
+  background: rgba(16, 185, 129, 0.08);
+}
+
+.v-timeline-card.pending {
+  border-left-color: #f59e0b;
+  background: rgba(245, 158, 11, 0.08);
+}
+
+.v-card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.25rem;
+}
+
+.v-time {
+  font-size: 0.68rem;
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+}
+
+.v-phase-pill {
+  font-size: 0.625rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  padding: 0.1rem 0.35rem;
+  border-radius: 3px;
+}
+
+.v-phase-pill.pass { background: rgba(16, 185, 129, 0.2); color: var(--accent-green); }
+.v-phase-pill.fail { background: rgba(239, 68, 68, 0.2); color: #f87171; }
+.v-phase-pill.pending { background: rgba(245, 158, 11, 0.2); color: #fbbf24; }
+
+.v-card-title {
+  font-weight: 700;
+  font-size: 0.785rem;
+  color: white;
+  margin-bottom: 0.15rem;
+}
+
+.v-card-desc {
+  font-size: 0.725rem;
+  color: var(--text-muted);
+}
+
+.v-actions-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.v-actions-intro {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  line-height: 1.3;
+}
+
+.v-button-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.v-action-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--border-subtle);
+  border-radius: 6px;
+  padding: 0.6rem 0.75rem;
+  color: white;
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.2s ease;
+}
+
+.v-action-btn:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: var(--accent-cyan);
+}
+
+.v-action-btn.active-bug {
+  background: rgba(239, 68, 68, 0.15);
+  border-color: #ef4444;
+}
+
+.v-action-btn strong {
+  font-size: 0.8rem;
+}
+
+.v-action-btn span {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  margin-top: 0.1rem;
+}
+
+.v-action-btn.fix-btn {
+  background: rgba(16, 185, 129, 0.15);
+  border-color: rgba(16, 185, 129, 0.4);
+}
+
+.v-action-btn.fix-btn:hover {
+  background: rgba(16, 185, 129, 0.25);
+  border-color: var(--accent-green);
+}
+
+.v-diagnostic-box {
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  border-radius: 6px;
+  padding: 0.65rem;
+  font-size: 0.725rem;
+}
+
+.v-diag-header {
+  font-weight: 800;
+  color: #f87171;
+  margin-bottom: 0.35rem;
+  letter-spacing: 0.5px;
+}
+
+.v-diag-body p {
+  color: #e2e8f0;
+  margin-bottom: 0.2rem;
+}
+
+.v-diag-body code {
+  background: rgba(0, 0, 0, 0.4);
+  padding: 0.1rem 0.3rem;
+  border-radius: 3px;
+  color: var(--accent-cyan);
+}
+

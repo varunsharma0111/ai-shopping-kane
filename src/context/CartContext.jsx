@@ -8,7 +8,6 @@ export const CartProvider = ({ children }) => {
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
   const [completedOrder, setCompletedOrder] = useState(null);
   const [chaosMode, setChaosMode] = useState(false);
-  const [bugMode, setBugMode] = useState(false);
   const [telemetryLogs, setTelemetryLogs] = useState([
     { id: 1, type: 'SYSTEM', text: 'AI Self-Healing Shopping App initialized.', time: new Date().toLocaleTimeString() }
   ]);
@@ -20,18 +19,84 @@ export const CartProvider = ({ children }) => {
     ]);
   };
 
+  const [activeBug, setActiveBug] = useState('CART_CALCULATION'); // 'CART_CALCULATION' | 'CHECKOUT_VALIDATION' | null
+  const [verificationTimeline, setVerificationTimeline] = useState([
+    { id: 1, time: new Date().toLocaleTimeString(), phase: 'REGRESSION_1', title: '⚠️ Cart Subtotal Bug Active', desc: 'Subtotal calculates base unit price ($299.99) instead of (2 × $299.99 = $599.98)', status: 'fail' }
+  ]);
+
+  const addTimelineEvent = (phase, title, desc, status = 'pass') => {
+    setVerificationTimeline((prev) => [
+      { id: Date.now(), time: new Date().toLocaleTimeString(), phase, title, desc, status },
+      ...prev.slice(0, 9)
+    ]);
+  };
+
+  const injectCartBug = () => {
+    setActiveBug('CART_CALCULATION');
+    addLog('BUG', '⚠️ Regression #1 Injected: Cart total uses base price instead of (price × quantity)');
+    addTimelineEvent('REGRESSION_1', 'AI modified cart formula', 'Bug #1 introduced: subtotal = item.price * 1', 'fail');
+  };
+
+  const injectCheckoutBug = () => {
+    setActiveBug('CHECKOUT_VALIDATION');
+    addLog('BUG', '⚠️ Regression #2 Injected: Email format validation bypassed');
+    addTimelineEvent('REGRESSION_2', 'AI modified checkout modal', 'Bug #2 introduced: email regex validation removed', 'fail');
+  };
+
+  const clearBugs = () => {
+    setActiveBug(null);
+    addLog('FIX', '✅ Codebase restored to healthy state');
+    addTimelineEvent('RESTORE', 'Code base verified', 'All calculations and validations operating cleanly', 'pass');
+  };
+
+  const triggerSelfHealingLoop = async (bugType = 'CART_CALCULATION') => {
+    if (bugType === 'CART_CALCULATION') {
+      injectCartBug();
+      addTimelineEvent('KANE_RUN', 'Kane CLI Started', 'Running test: verify cart-total is 599.98', 'pending');
+      
+      setTimeout(() => {
+        addTimelineEvent('KANE_FAIL', '❌ KANE FAILURE DETECTED', 'Expected $599.98, Actual $299.99', 'fail');
+      }, 1500);
+
+      setTimeout(() => {
+        addTimelineEvent('AI_DIAGNOSIS', '🧠 AI Agent Diagnosed Issue', 'CartContext.jsx line 75 misses (item.price * 1)', 'pending');
+      }, 3000);
+
+      setTimeout(() => {
+        addTimelineEvent('AI_FIX', '🛠️ AI Applied Fix', 'Code updated to item.price * 1', 'pass');
+        clearBugs();
+      }, 4500);
+
+      setTimeout(() => {
+        addTimelineEvent('KANE_VERIFY', '✅ KANE RE-RUN VERIFIED', '100% End-to-End Closed Loop Passed!', 'pass');
+      }, 6000);
+    } else {
+      injectCheckoutBug();
+      addTimelineEvent('KANE_RUN', 'Kane CLI Started', 'Running test: verify email-error on invalid email', 'pending');
+      
+      setTimeout(() => {
+        addTimelineEvent('KANE_FAIL', '❌ KANE FAILURE DETECTED', 'Expected email-error, but order submitted with invalid email', 'fail');
+      }, 1500);
+
+      setTimeout(() => {
+        addTimelineEvent('AI_DIAGNOSIS', '🧠 AI Agent Diagnosed Issue', 'CheckoutModal.jsx missing email regex validation', 'pending');
+      }, 3000);
+
+      setTimeout(() => {
+        addTimelineEvent('AI_FIX', '🛠️ AI Applied Fix', 'Restored email pattern check: /\\S+@\\S+\\.\\S+/', 'pass');
+        clearBugs();
+      }, 4500);
+
+      setTimeout(() => {
+        addTimelineEvent('KANE_VERIFY', '✅ KANE RE-RUN VERIFIED', '100% End-to-End Closed Loop Passed!', 'pass');
+      }, 6000);
+    }
+  };
+
   const toggleChaosMode = () => {
     setChaosMode((prev) => {
       const next = !prev;
       addLog('CHAOS', next ? '⚠️ Chaos Mode ACTIVE: Classnames dynamically mutated.' : '✅ Chaos Mode OFF: Standard DOM restored.');
-      return next;
-    });
-  };
-
-  const toggleBugMode = () => {
-    setBugMode((prev) => {
-      const next = !prev;
-      addLog('BUG', next ? '🐛 Special Bug INJECTED: Subtotal calculation flaw enabled (Total glitch).' : '✅ Bug REMOVED: Calculations working normally.');
       return next;
     });
   };
@@ -79,12 +144,12 @@ export const CartProvider = ({ children }) => {
   };
 
   const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
-  const realSubtotal = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
-  // If bugMode is active, calculate subtotal incorrectly (e.g. missing 1 item's price) so Kane detects calculation bug!
-  const subtotal = bugMode
-    ? (cart.length > 0 ? realSubtotal - cart[0].price : realSubtotal)
-    : realSubtotal;
+  // Subtotal calculation (accounts for activeBug simulation if active)
+  const subtotal = cart.reduce((sum, item) => {
+    const qtyMultiplier = activeBug === 'CART_CALCULATION' ? 1 : item.quantity;
+    return sum + item.price * qtyMultiplier;
+  }, 0);
 
   const shipping = subtotal > 0 ? (subtotal > 200 ? 0 : 15.00) : 0;
   const total = subtotal + shipping;
@@ -99,7 +164,6 @@ export const CartProvider = ({ children }) => {
         clearCart,
         totalItems,
         subtotal,
-        realSubtotal,
         shipping,
         total,
         isCartOpen,
@@ -110,10 +174,13 @@ export const CartProvider = ({ children }) => {
         setCompletedOrder,
         chaosMode,
         toggleChaosMode,
-        bugMode,
-        toggleBugMode,
         telemetryLogs,
-        addLog
+        addLog,
+        injectCartBug,
+        injectCheckoutBug,
+        clearBugs,
+        triggerSelfHealingLoop,
+        verificationTimeline
       }}
     >
       {children}

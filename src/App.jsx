@@ -6,6 +6,7 @@ import { CartDrawer } from './components/CartDrawer';
 import { CheckoutModal } from './components/CheckoutModal';
 import { OrderConfirmation } from './components/OrderConfirmation';
 import { TelemetryBar } from './components/TelemetryBar';
+import { VerificationDashboard } from './components/VerificationDashboard';
 import './index.css';
 
 export function App() {
@@ -26,6 +27,7 @@ export function App() {
         <CheckoutModal />
         <OrderConfirmation />
         <TelemetryBar />
+        <VerificationDashboard />
       </div>
     </CartProvider>
   );

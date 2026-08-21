@@ -1,0 +1,18 @@
+{
+  "commit_id": "e288deb0-0124-4cc5-a0a7-09384ceefa86",
+  "test_id": "9447bf5f-6e83-4410-ab7a-d2527e5c2c65",
+  "testcase_id": "01M0HX58PQVDR8YWZYZ6VFVFY5",
+  "project_id": "01M0G43N9M4Y8CWG2W22A7A1DA",
+  "folder_id": "01M0G446FEY7Q8YSMRM2H1QGJ6",
+  "org_id": "3283029",
+  "session_name": "shopping_flow",
+  "executions": [
+    {
+      "execution_id": "2ea580e0-ca2e-48a7-a75b-45dd64dec5e2",
+      "run_kind": "author",
+      "status": "broken",
+      "valid": false,
+      "at": "2026-08-21T10:52:46.565Z"
+    }
+  ]
+}

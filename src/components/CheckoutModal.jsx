@@ -122,7 +122,7 @@ export const CheckoutModal = () => {
               onChange={handleChange}
               className={errors.email ? 'input-error' : ''}
             />
-            {errors.email && <span className="error-text">{errors.email}</span>}
+            {errors.email && <span className="error-text" data-testid="email-error">{errors.email}</span>}
           </div>
 
           <div className="form-group">
